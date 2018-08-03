@@ -1,0 +1,27 @@
+<div class="sc-element">
+    @Edit.Toolbar(Content, settings: new { show = "always" })
+</div>
+
+@Edit.Toolbar(actions: "new", contentType: "categories") @Edit.Toolbar(actions: "new", contentType: "questions")
+@foreach(var cat in AsDynamic(App.Data["categories"]).OrderBy(o => o.catOrder)){
+    <div id="@cat.catID">
+        <div>@Edit.Toolbar(cat, actions: "edit")<h3>@cat.catDesc</h3></div>
+        <div id="@(cat.catID + "_items")" class="toggle toggle-primary toggle-simple" data-plugin-toggle="toggle">
+            @foreach(var q in AsDynamic(App.Data["questions"]).Where(c => c.qCat == cat.catID).OrderBy(o => o.qOrder)){
+                if(q.qActive == true) {
+                    @: <section id="@q.qCat" class="toggle active">
+                    } else {
+                    @: <section id="@q.qCat" class="toggle">
+                }  
+                    @: <label>@q.qDesc @Edit.Toolbar(q, actions: "edit")</label>
+                    @: <div class="toggle-content">
+                    @:     <p>@Html.Raw(q.qAnswer)</p>
+                    @: </div>
+                @: </section>
+            }
+        </div>
+    </div>
+    <br>
+}
+
+<div @Edit.Attribute("quick-edit-config", new { modules = new {  enable = false }})></div>
